@@ -15,11 +15,11 @@ Simply add a job to the end of your workflow and list the last job as dependency
 ...
   notification:
     name: Notify
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     needs: [build]
     if: always()
     steps: 
-      - uses: martialonline/workflow-status@v2
+      - uses: plentymarkets/workflow-status@v3
         id: check
       - run: echo "Workflow failed"
         if: steps.check.outputs.status == 'failure'
@@ -45,7 +45,7 @@ jobs:
 
   test:
     name: Test
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
@@ -54,7 +54,7 @@ jobs:
 
   build:
     name: Build
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
@@ -63,17 +63,26 @@ jobs:
 
   notification:
     name: Notify
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     needs: [build]
     if: always()
     steps: 
-      - uses: martialonline/workflow-status@v2
+      - uses: plentymarkets/workflow-status@v3
         id: check
       - uses: 8398a7/action-slack@v3
         with:
           status: ${{ steps.check.outputs.status }}
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+```
+
+### Private repository
+
+If your want to check a private repository, please provide the GITHUB_TOKEN:
+
+```yaml
+with:
+  token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 ### License
